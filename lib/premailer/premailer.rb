@@ -504,7 +504,12 @@ public
 
   # Check <tt>CLIENT_SUPPORT_FILE</tt> for any CSS warnings
   def check_client_support # :nodoc:
-    @client_support ||= YAML::load(File.open(CLIENT_SUPPORT_FILE))
+    @client_support ||=
+      if YAML.respond_to?(:unsafe_load)
+        YAML.unsafe_load(File.open(CLIENT_SUPPORT_FILE))
+      else
+        YAML::load(File.open(CLIENT_SUPPORT_FILE))
+      end
 
     warnings = []
     properties = []
